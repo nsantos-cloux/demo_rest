@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Olive & Ember — Mediterranean Kitchen</title>
+<meta name="description" content="Olive & Ember — a cozy Mediterranean restaurant. Fresh seasonal dishes, wood-fired bread and natural wines.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #faf6ef;
+    --bg-alt: #f1e9dc;
+    --ink: #2b2420;
+    --muted: #6e625a;
+    --accent: #b5542d;
+    --accent-dark: #8f3f1f;
+    --olive: #5f6b3a;
+    --card: #ffffff;
+    --line: #e4d9c8;
+    --radius: 14px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: "Inter", system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.6;
+  }
+  h1, h2, h3 { font-family: "Fraunces", Georgia, serif; font-weight: 600; line-height: 1.15; }
+  a { color: inherit; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+  section { padding: 90px 0; }
+  .eyebrow {
+    text-transform: uppercase; letter-spacing: .14em; font-size: .78rem;
+    color: var(--accent); font-weight: 600; margin-bottom: 12px;
+  }
+  .section-title { font-size: clamp(2rem, 4vw, 2.8rem); margin-bottom: 16px; }
+  .section-intro { color: var(--muted); max-width: 560px; }
+
+  /* Buttons */
+  .btn {
+    display: inline-block; padding: 14px 28px; border-radius: 999px;
+    font-weight: 600; text-decoration: none; border: 2px solid var(--accent);
+    background: var(--accent); color: #fff; cursor: pointer; font-size: 1rem;
+    transition: background .2s, transform .2s;
+  }
+  .btn:hover { background: var(--accent-dark); border-color: var(--accent-dark); transform: translateY(-2px); }
+  .btn-ghost { background: transparent; color: #fff; border-color: rgba(255,255,255,.7); }
+  .btn-ghost:hover { background: rgba(255,255,255,.12); border-color: #fff; }
+
+  /* Nav */
+  header {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(250,246,239,.92); backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav { display: flex; align-items: center; justify-content: space-between; height: 70px; }
+  .logo { font-family: "Fraunces", serif; font-size: 1.4rem; font-weight: 600; text-decoration: none; }
+  .logo span { color: var(--accent); }
+  .nav-links { display: flex; gap: 32px; list-style: none; align-items: center; }
+  .nav-links a { text-decoration: none; font-weight: 500; color: var(--muted); transition: color .2s; }
+  .nav-links a:hover { color: var(--ink); }
+  .nav-links .btn { color: #fff; padding: 10px 22px; }
+  .menu-toggle { display: none; background: none; border: none; cursor: pointer; padding: 8px; }
+  .menu-toggle span { display: block; width: 24px; height: 2px; background: var(--ink); margin: 5px 0; transition: .3s; }
+
+  /* Hero */
+  .hero {
+    position: relative; color: #fff; padding: 150px 0 130px; overflow: hidden;
+    background:
+      radial-gradient(circle at 80% 20%, rgba(232,140,80,.55), transparent 45%),
+      radial-gradient(circle at 15% 85%, rgba(95,107,58,.7), transparent 50%),
+      linear-gradient(135deg, #3a2a20 0%, #5a3424 55%, #2b2420 100%);
+  }
+  .hero::after {
+    content: ""; position: absolute; inset: 0; opacity: .08;
+    background-image: radial-gradient(#fff 1px, transparent 1px); background-size: 22px 22px;
+  }
+  .hero .container { position: relative; z-index: 1; }
+  .hero .eyebrow { color: #f3b58c; }
+  .hero h1 { font-size: clamp(2.6rem, 7vw, 4.8rem); max-width: 760px; margin-bottom: 22px; }
+  .hero p { font-size: 1.15rem; max-width: 520px; opacity: .9; margin-bottom: 36px; }
+  .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; }
+  .hero-badges { display: flex; gap: 36px; margin-top: 60px; flex-wrap: wrap; }
+  .hero-badges div strong { display: block; font-family: "Fraunces", serif; font-size: 1.8rem; }
+  .hero-badges div span { font-size: .9rem; opacity: .8; }
+
+  /* About */
+  .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+  .about-visual {
+    aspect-ratio: 4/5; border-radius: var(--radius); position: relative; overflow: hidden;
+    background: linear-gradient(160deg, var(--olive), #3d4524);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .about-visual svg { width: 55%; opacity: .9; }
+  .about-visual .tag {
+    position: absolute; bottom: 20px; left: 20px; right: 20px;
+    background: var(--card); padding: 16px 20px; border-radius: 10px; font-size: .92rem;
+  }
+  .about-visual .tag strong { color: var(--accent); }
+  .about-text p { color: var(--muted); margin-bottom: 18px; }
+  .features { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 30px; }
+  .feature { display: flex; gap: 12px; align-items: flex-start; }
+  .feature-icon {
+    flex-shrink: 0; width: 40px; height: 40px; border-radius: 10px;
+    background: var(--bg-alt); display: grid; place-items: center; color: var(--accent);
+  }
+  .feature h3 { font-family: "Inter", sans-serif; font-size: .98rem; margin-bottom: 2px; }
+  .feature p { font-size: .88rem; margin: 0; }
+
+  /* Menu */
+  #menu { background: var(--bg-alt); }
+  .menu-head { text-align: center; margin-bottom: 40px; }
+  .menu-head .section-intro { margin: 0 auto; }
+  .tabs { display: flex; justify-content: center; gap: 10px; margin-bottom: 40px; flex-wrap: wrap; }
+  .tab {
+    padding: 10px 22px; border-radius: 999px; border: 1px solid var(--line);
+    background: var(--card); cursor: pointer; font: inherit; font-weight: 500; color: var(--muted);
+    transition: .2s;
+  }
+  .tab.active, .tab:hover { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .menu-list { display: none; grid-template-columns: 1fr 1fr; gap: 18px 50px; }
+  .menu-list.active { display: grid; animation: fade .4s ease; }
+  @keyframes fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  .dish { padding: 18px 0; border-bottom: 1px dashed var(--line); }
+  .dish-top { display: flex; justify-content: space-between; gap: 16px; align-items: baseline; }
+  .dish h3 { font-size: 1.15rem; }
+  .price { font-weight: 600; color: var(--accent); white-space: nowrap; }
+  .dish p { color: var(--muted); font-size: .92rem; margin-top: 4px; }
+  .label {
+    display: inline-block; font-size: .7rem; font-weight: 600; text-transform: uppercase;
+    letter-spacing: .06em; padding: 2px 8px; border-radius: 6px; margin-left: 8px;
+    background: #e6ead8; color: var(--olive); vertical-align: middle; font-family: "Inter", sans-serif;
+  }
+
+  /* Reviews */
+  .reviews { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 40px; }
+  .review { background: var(--card); padding: 28px; border-radius: var(--radius); border: 1px solid var(--line); }
+  .stars { color: #d99a2b; letter-spacing: 2px; margin-bottom: 12px; }
+  .review p { font-style: italic; color: var(--muted); margin-bottom: 16px; }
+  .review strong { font-size: .9rem; }
+
+  /* Reservation */
+  #reserve { background: var(--ink); color: #fff; }
+  #reserve .section-intro { color: #c9bdb3; }
+  .reserve-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 60px; }
+  .info-block { margin-top: 32px; }
+  .info-block h3 { font-family: "Inter", sans-serif; font-size: .8rem; text-transform: uppercase; letter-spacing: .12em; color: #f3b58c; margin-bottom: 8px; }
+  .info-block p, .hours li { color: #e6ddd4; }
+  .hours { list-style: none; }
+  .hours li { display: flex; justify-content: space-between; max-width: 280px; padding: 4px 0; }
+  form { background: #3a312c; padding: 36px; border-radius: var(--radius); }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .field { margin-bottom: 18px; }
+  label { display: block; font-size: .85rem; margin-bottom: 6px; color: #d8cec5; }
+  input, select, textarea {
+    width: 100%; padding: 12px 14px; border-radius: 10px; border: 1px solid #574a42;
+    background: #2b2420; color: #fff; font: inherit;
+  }
+  input:focus, select:focus, textarea:focus { outline: 2px solid var(--accent); border-color: transparent; }
+  form .btn { width: 100%; margin-top: 6px; }
+  .success {
+    display: none; text-align: center; padding: 40px 20px;
+  }
+  .success.show { display: block; }
+  .success h3 { font-size: 1.8rem; margin-bottom: 10px; }
+  .success p { color: #d8cec5; }
+
+  /* Footer */
+  footer { padding: 40px 0; text-align: center; color: var(--muted); font-size: .88rem; }
+  footer .logo { display: inline-block; margin-bottom: 10px; }
+  .demo-note { margin-top: 10px; font-size: .78rem; opacity: .75; }
+
+  /* Responsive */
+  @media (max-width: 860px) {
+    section { padding: 70px 0; }
+    .about-grid, .reserve-grid, .menu-list.active { grid-template-columns: 1fr; }
+    .about-visual { aspect-ratio: 16/10; }
+    .reviews { grid-template-columns: 1fr; }
+    .menu-toggle { display: block; }
+    .nav-links {
+      position: absolute; top: 70px; left: 0; right: 0; flex-direction: column; gap: 0;
+      background: var(--bg); border-bottom: 1px solid var(--line);
+      max-height: 0; overflow: hidden; transition: max-height .3s ease;
+    }
+    .nav-links.open { max-height: 400px; }
+    .nav-links li { width: 100%; text-align: center; padding: 14px 0; }
+  }
+  @media (max-width: 520px) {
+    .features, .form-row { grid-template-columns: 1fr; }
+    form { padding: 24px; }
+    .hero { padding: 110px 0 90px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <nav class="container nav">
+    <a href="#" class="logo">Olive <span>&amp;</span> Ember</a>
+    <button class="menu-toggle" aria-label="Open menu" onclick="toggleMenu()">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#about" onclick="closeMenu()">About</a></li>
+      <li><a href="#menu" onclick="closeMenu()">Menu</a></li>
+      <li><a href="#reviews" onclick="closeMenu()">Reviews</a></li>
+      <li><a href="#reserve" class="btn" onclick="closeMenu()">Book a table</a></li>
+    </ul>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <p class="eyebrow">Mediterranean kitchen &amp; wine bar</p>
+    <h1>Slow food, wood fire, good company.</h1>
+    <p>Seasonal dishes inspired by the coasts of Italy, Spain and Greece — cooked over an open flame and made to share.</p>
+    <div class="hero-actions">
+      <a href="#reserve" class="btn">Reserve a table</a>
+      <a href="#menu" class="btn btn-ghost">See the menu</a>
+    </div>
+    <div class="hero-badges">
+      <div><strong>4.8 ★</strong><span>Guest rating</span></div>
+      <div><strong>Since 2016</strong><span>Family owned</span></div>
+      <div><strong>100%</strong><span>Local produce</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="about">
+  <div class="container about-grid">
+    <div class="about-visual">
+      <svg viewBox="0 0 100 100" fill="none" stroke="#f1e9dc" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M50 88 C50 60 50 40 50 12"/>
+        <path d="M50 30 C38 22 30 24 24 32 C34 36 42 36 50 30Z" fill="#f1e9dc" fill-opacity=".15"/>
+        <path d="M50 46 C62 38 70 40 76 48 C66 52 58 52 50 46Z" fill="#f1e9dc" fill-opacity=".15"/>
+        <path d="M50 62 C38 54 30 56 24 64 C34 68 42 68 50 62Z" fill="#f1e9dc" fill-opacity=".15"/>
+        <ellipse cx="66" cy="28" rx="6" ry="8" fill="#b5542d" stroke="none"/>
+        <ellipse cx="34" cy="48" rx="6" ry="8" fill="#b5542d" stroke="none"/>
+      </svg>
+      <div class="tag"><strong>Chef's tip:</strong> try the slow-roasted lamb with our house red.</div>
+    </div>
+    <div class="about-text">
+      <p class="eyebrow">Our story</p>
+      <h2 class="section-title">A small kitchen with a big fire.</h2>
+      <p>Olive &amp; Ember started as a dream between two friends who grew up cooking with their grandmothers by the sea. Today it's a warm, relaxed place where food is shared and conversations last long after dessert.</p>
+      <p>We bake our bread every morning, work with local farmers, and change the menu with the seasons.</p>
+      <div class="features">
+        <div class="feature">
+          <div class="feature-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2c1 4 5 6 5 11a5 5 0 0 1-10 0c0-3 2-4 2-7 2 1 3 3 3 5"/></svg>
+          </div>
+          <div><h3>Wood-fired</h3><p>Everything kissed by the flame.</p></div>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 20A7 7 0 0 1 4 13c0-5 4-9 16-9 0 12-4 16-9 16Z"/><path d="M4 20 14 10"/></svg>
+          </div>
+          <div><h3>Local &amp; seasonal</h3><p>Fresh from nearby farms.</p></div>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 22h8M12 15v7M7 2h10l-1 7a4 4 0 0 1-8 0Z"/></svg>
+          </div>
+          <div><h3>Natural wines</h3><p>Small, honest producers.</p></div>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></svg>
+          </div>
+          <div><h3>Group dinners</h3><p>Private room for up to 20.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="menu">
+  <div class="container">
+    <div class="menu-head">
+      <p class="eyebrow">Menu</p>
+      <h2 class="section-title">Made to share</h2>
+      <p class="section-intro">Our menu changes with the seasons. Ask your server about today's specials.</p>
+    </div>
+    <div class="tabs">
+      <button class="tab active" data-tab="starters">Starters</button>
+      <button class="tab" data-tab="mains">Mains</button>
+      <button class="tab" data-tab="desserts">Desserts</button>
+      <button class="tab" data-tab="drinks">Drinks</button>
+    </div>
+
+    <div class="menu-list active" id="starters">
+      <div class="dish"><div class="dish-top"><h3>Wood-fired flatbread <span class="label">Veg</span></h3><span class="price">€7</span></div><p>Rosemary, sea salt, olive oil from Crete.</p></div>
+      <div class="dish"><div class="dish-top"><h3>Burrata &amp; heirloom tomatoes <span class="label">Veg</span></h3><span class="price">€13</span></div><p>Basil oil, toasted pine nuts, aged balsamic.</p></div>
+      <div class="dish"><div class="dish-top"><h3>Grilled octopus</h3><span class="price">€15</span></div><p>Smoked paprika, crushed potatoes, lemon.</p></div>
+      <div class="dish"><div class="dish-top"><h3>Mezze board <span class="label">Vegan</span></h3><span class="price">€16</span></div><p>Hummus, baba ganoush, olives, pickles, warm pita.</p></div>
+    </div>
+
+    <div class="menu-list" id="mains">
+      <div class="dish"><div class="dish-top"><h3>Slow-roasted lamb shoulder</h3><span class="price">€26</span></div><p>Seven hours in the oven, garlic yogurt, herb salad.</p></div>
+      <div class="dish"><div class="dish-top"><h3>Seafood paella</h3><span class="price">€24</span></div><p>Saffron rice, prawns, mussels, squid — for one or two.</p></div>
+      <div class="dish"><div class="dish-top"><h3>Ember-grilled sea bass</h3><span class="price">€25</span></div><p>Salsa verde, charred fennel, new potatoes.</p></div>
+      <div class="dish"><div class="dish-top"><h3>Wild mushroom orzo <span class="label">Veg</span></h3><span class="price">€19</span></div><p>Parmesan, thyme, truffle oil.</p></div>
+    </div>
+
+    <div class="menu-list" id="desserts">
+      <div class="dish"><div class="dish-top"><h3>Basque cheesecake</h3><span class="price">€9</span></div><p>Burnt top, creamy heart, seasonal fruit.</p></div>
+      <div class="dish"><div class="dish-top"><h3>Olive oil cake</h3><span class="price">€8</span></div><p>Orange zest, mascarpone cream.</p></div>
+      <div class="dish"><div class="dish-top"><h3>Dark chocolate mousse <span class="label">Vegan</span></h3><span class="price">€8</span></div><p>Sea salt, olive oil drizzle.</p></div>
+      <div class="dish"><div class="dish-top"><h3>Affogato</h3><span class="price">€6</span></div><p>Vanilla gelato drowned in espresso.</p></div>
+    </div>
+
+    <div class="menu-list" id="drinks">
+      <div class="dish"><div class="dish-top"><h3>House red / white</h3><span class="price">€6 / glass</span></div><p>Rotating natural wines from small producers.</p></div>
+      <div class="dish"><div class="dish-top"><h3>Aperol spritz</h3><span class="price">€9</span></div><p>The classic, bright and bitter.</p></div>
+      <div class="dish"><div class="dish-top"><h3>Fresh lemonade</h3><span class="price">€4.5</span></div><p>Lemon, mint, a touch of honey.</p></div>
+      <div class="dish"><div class="dish-top"><h3>Espresso / cappuccino</h3><span class="price">€2.8 / €3.5</span></div><p>Locally roasted beans.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="reviews">
+  <div class="container">
+    <p class="eyebrow">Reviews</p>
+    <h2 class="section-title">What our guests say</h2>
+    <p class="section-intro">Sample reviews for this demo site.</p>
+    <div class="reviews">
+      <div class="review">
+        <div class="stars">★★★★★</div>
+        <p>"The lamb was unreal. Cozy atmosphere and the staff made us feel at home."</p>
+        <strong>— Sample guest</strong>
+      </div>
+      <div class="review">
+        <div class="stars">★★★★★</div>
+        <p>"Best paella I've had outside of Spain. We'll be back for sure."</p>
+        <strong>— Sample guest</strong>
+      </div>
+      <div class="review">
+        <div class="stars">★★★★☆</div>
+        <p>"Great wine list and lovely desserts. Book ahead on weekends!"</p>
+        <strong>— Sample guest</strong>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="reserve">
+  <div class="container reserve-grid">
+    <div>
+      <p class="eyebrow">Reservations</p>
+      <h2 class="section-title">Book your table</h2>
+      <p class="section-intro">Walk-ins are welcome, but we recommend booking for groups and weekends.</p>
+      <div class="info-block">
+        <h3>Opening hours</h3>
+        <ul class="hours">
+          <li><span>Mon – Tue</span><span>Closed</span></li>
+          <li><span>Wed – Thu</span><span>17:00 – 22:00</span></li>
+          <li><span>Fri – Sat</span><span>17:00 – 23:30</span></li>
+          <li><span>Sunday</span><span>12:00 – 21:00</span></li>
+        </ul>
+      </div>
+      <div class="info-block">
+        <h3>Find us</h3>
+        <p>12 Market Street, Your City<br>+00 00 000 0000 · hello@example.com</p>
+      </div>
+    </div>
+
+    <div>
+      <form id="bookingForm">
+        <div class="form-row">
+          <div class="field"><label for="name">Name</label><input id="name" required placeholder="Your name"></div>
+          <div class="field"><label for="email">Email</label><input id="email" type="email" required placeholder="you@email.com"></div>
+        </div>
+        <div class="form-row">
+          <div class="field"><label for="date">Date</label><input id="date" type="date" required></div>
+          <div class="field"><label for="time">Time</label>
+            <select id="time" required>
+              <option value="">Choose a time</option>
+              <option>17:30</option><option>18:00</option><option>18:30</option><option>19:00</option>
+              <option>19:30</option><option>20:00</option><option>20:30</option><option>21:00</option>
+            </select>
+          </div>
+        </div>
+        <div class="field"><label for="guests">Guests</label>
+          <select id="guests" required>
+            <option>2 people</option><option>1 person</option><option>3 people</option><option>4 people</option>
+            <option>5 people</option><option>6 people</option><option>7+ people (we'll call you)</option>
+          </select>
+        </div>
+        <div class="field"><label for="notes">Special requests</label><textarea id="notes" rows="3" placeholder="Allergies, birthday, high chair…"></textarea></div>
+        <button type="submit" class="btn">Confirm reservation</button>
+      </form>
+      <div class="success" id="success">
+        <h3>See you soon! 🔥</h3>
+        <p id="successText"></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <a href="#" class="logo">Olive <span>&amp;</span> Ember</a>
+    <p>© <span id="year"></span> Olive &amp; Ember. All rights reserved.</p>
+    <p class="demo-note">Demo project — fictional restaurant created for a web design portfolio.</p>
+  </div>
+</footer>
+
+<script>
+  // Mobile menu
+  function toggleMenu() { document.getElementById('navLinks').classList.toggle('open'); }
+  function closeMenu() { document.getElementById('navLinks').classList.remove('open'); }
+
+  // Menu tabs
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.menu-list').forEach(l => l.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById(tab.dataset.tab).classList.add('active');
+    });
+  });
+
+  // Booking form: no past dates
+  const dateInput = document.getElementById('date');
+  dateInput.min = new Date().toISOString().split('T')[0];
+
+  // Booking form (demo: no server, just shows a confirmation)
+  document.getElementById('bookingForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const name = document.getElementById('name').value.split(' ')[0];
+    const date = new Date(dateInput.value).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
+    const time = document.getElementById('time').value;
+    const guests = document.getElementById('guests').value;
+    document.getElementById('successText').textContent =
+      `Thanks ${name}! Your table for ${guests} on ${date} at ${time} is requested. We'll confirm by email shortly.`;
+    e.target.style.display = 'none';
+    document.getElementById('success').classList.add('show');
+  });
+
+  document.getElementById('year').textContent = new Date().getFullYear();
+</script>
+</body>
+</html>
