@@ -443,5 +443,143 @@
 
   document.getElementById('year').textContent = new Date().getFullYear();
 </script>
+
+<style>
+  .cb-launcher {
+    position: fixed; right: 20px; bottom: 20px; z-index: 100;
+    width: 60px; height: 60px; border-radius: 50%; border: none; cursor: pointer;
+    background: var(--accent, #b5542d); color: #fff; box-shadow: 0 8px 24px rgba(0,0,0,.25);
+    display: grid; place-items: center; transition: transform .2s;
+  }
+  .cb-launcher:hover { transform: scale(1.06); }
+  .cb-bubble {
+    position: fixed; right: 90px; bottom: 32px; z-index: 100;
+    background: #fff; color: #2b2420; padding: 8px 14px; border-radius: 12px;
+    font-size: .88rem; box-shadow: 0 4px 16px rgba(0,0,0,.15); animation: cbPop .4s ease;
+  }
+  .cb-window {
+    position: fixed; right: 20px; bottom: 92px; z-index: 100;
+    width: 360px; max-width: calc(100vw - 32px); height: 520px; max-height: calc(100vh - 120px);
+    background: #fff; border-radius: 18px; overflow: hidden; display: none; flex-direction: column;
+    box-shadow: 0 16px 48px rgba(0,0,0,.25); font-family: "Inter", system-ui, sans-serif;
+  }
+  .cb-window.open { display: flex; animation: cbPop .25s ease; }
+  @keyframes cbPop { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  .cb-header { background: #2b2420; color: #fff; padding: 16px 18px; display: flex; align-items: center; gap: 12px; }
+  .cb-avatar { width: 38px; height: 38px; border-radius: 50%; background: var(--accent, #b5542d); display: grid; place-items: center; font-size: 1.1rem; }
+  .cb-header strong { display: block; font-size: .98rem; }
+  .cb-header span { font-size: .78rem; opacity: .75; }
+  .cb-header span::before { content: "●"; color: #6fcf6f; margin-right: 5px; }
+  .cb-close { margin-left: auto; background: none; border: none; color: #fff; font-size: 1.4rem; cursor: pointer; opacity: .8; }
+  .cb-messages { flex: 1; overflow-y: auto; padding: 16px; background: #faf6ef; display: flex; flex-direction: column; gap: 10px; }
+  .cb-msg { max-width: 82%; padding: 10px 14px; border-radius: 14px; font-size: .92rem; line-height: 1.45; white-space: pre-wrap; }
+  .cb-msg.bot { background: #fff; color: #2b2420; border: 1px solid #e4d9c8; align-self: flex-start; border-bottom-left-radius: 4px; }
+  .cb-msg.user { background: var(--accent, #b5542d); color: #fff; align-self: flex-end; border-bottom-right-radius: 4px; }
+  .cb-typing { display: inline-flex; gap: 4px; }
+  .cb-typing i { width: 7px; height: 7px; border-radius: 50%; background: #b9ab9f; animation: cbDot 1s infinite; }
+  .cb-typing i:nth-child(2) { animation-delay: .15s; } .cb-typing i:nth-child(3) { animation-delay: .3s; }
+  @keyframes cbDot { 0%, 60%, 100% { opacity: .3; } 30% { opacity: 1; } }
+  .cb-suggestions { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 16px 10px; background: #faf6ef; }
+  .cb-suggestions button {
+    border: 1px solid #e4d9c8; background: #fff; border-radius: 999px; padding: 6px 12px;
+    font: inherit; font-size: .8rem; cursor: pointer; color: #6e625a;
+  }
+  .cb-suggestions button:hover { border-color: var(--accent, #b5542d); color: var(--accent, #b5542d); }
+  .cb-form { display: flex; gap: 8px; padding: 12px; border-top: 1px solid #e4d9c8; background: #fff; }
+  .cb-form input { flex: 1; border: 1px solid #e4d9c8; border-radius: 999px; padding: 10px 16px; font: inherit; font-size: .92rem; color: #2b2420; background: #fff; }
+  .cb-form input:focus { outline: 2px solid var(--accent, #b5542d); border-color: transparent; }
+  .cb-form button { width: 42px; height: 42px; border-radius: 50%; border: none; background: var(--accent, #b5542d); color: #fff; cursor: pointer; display: grid; place-items: center; }
+  .cb-form button:disabled { opacity: .5; cursor: default; }
+  @media (max-width: 480px) { .cb-window { right: 16px; bottom: 88px; height: 70vh; } .cb-bubble { display: none; } }
+</style>
+
+<div class="cb-bubble" id="cbBubble">Questions? Ask our AI assistant 👋</div>
+<button class="cb-launcher" id="cbLauncher" aria-label="Open chat">
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+</button>
+
+<div class="cb-window" id="cbWindow" role="dialog" aria-label="Chat with our assistant">
+  <div class="cb-header">
+    <div class="cb-avatar">🔥</div>
+    <div><strong>Ember · AI assistant</strong><span>Online — replies instantly</span></div>
+    <button class="cb-close" id="cbClose" aria-label="Close chat">×</button>
+  </div>
+  <div class="cb-messages" id="cbMessages"></div>
+  <div class="cb-suggestions" id="cbSuggestions">
+    <button>Are you open on Monday?</button>
+    <button>Vegetarian options?</button>
+    <button>Table for 10 people?</button>
+  </div>
+  <form class="cb-form" id="cbForm">
+    <input id="cbInput" placeholder="Type your question…" autocomplete="off" maxlength="500">
+    <button type="submit" id="cbSend" aria-label="Send">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4z"/></svg>
+    </button>
+  </form>
+</div>
+
+<script>
+(() => {
+  // ⬇️ Paste your Cloudflare Worker URL here
+  const WORKER_URL = "https://olivechatbot.n-santos-cloux.workers.dev";
+
+  const $ = id => document.getElementById(id);
+  const win = $("cbWindow"), msgs = $("cbMessages"), input = $("cbInput"), send = $("cbSend");
+  const history = [];
+
+  function add(role, text) {
+    const div = document.createElement("div");
+    div.className = "cb-msg " + role;
+    div.textContent = text;
+    msgs.appendChild(div);
+    msgs.scrollTop = msgs.scrollHeight;
+    return div;
+  }
+
+  function open() {
+    win.classList.add("open");
+    $("cbBubble").style.display = "none";
+    if (!msgs.children.length) add("bot", "Hi! I'm Ember, the assistant of Olive & Ember 🔥 Ask me about our menu, opening hours or reservations.");
+    input.focus();
+  }
+
+  $("cbLauncher").onclick = () => win.classList.contains("open") ? win.classList.remove("open") : open();
+  $("cbClose").onclick = () => win.classList.remove("open");
+  setTimeout(() => { const b = $("cbBubble"); if (b) b.style.display = "none"; }, 8000);
+
+  async function ask(text) {
+    text = text.trim();
+    if (!text) return;
+    $("cbSuggestions").style.display = "none";
+    add("user", text);
+    history.push({ role: "user", text });
+    input.value = ""; send.disabled = true;
+
+    const typing = add("bot", "");
+    typing.innerHTML = '<span class="cb-typing"><i></i><i></i><i></i></span>';
+
+    try {
+      const res = await fetch(WORKER_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: history }),
+      });
+      const data = await res.json();
+      const reply = data.reply || "Sorry, something went wrong. Please call us at +00 00 000 0000.";
+      typing.textContent = reply;
+      if (data.reply) history.push({ role: "bot", text: reply });
+    } catch (e) {
+      typing.textContent = "I'm having trouble connecting right now. Please try again in a moment.";
+    }
+    send.disabled = false; input.focus();
+    msgs.scrollTop = msgs.scrollHeight;
+  }
+
+  $("cbForm").onsubmit = e => { e.preventDefault(); ask(input.value); };
+  $("cbSuggestions").querySelectorAll("button").forEach(b => b.onclick = () => { open(); ask(b.textContent); });
+})();
+</script>
+
+
 </body>
 </html>
